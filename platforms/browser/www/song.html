@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="robots" content="index, follow">
+<head>
+<script src="js/jquery.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/mustache.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/sidenav.css">
+<style type="text/css">
+body {
+	font-family: "Lato", sans-serif;
+	font-size: 100%;
+	margin:0;
+}
+
+img.play, img.pause {
+	float:right;
+	padding-right:25px;
+    padding-top:8px;
+	width:25px;
+}
+
+img.pause {
+	display:none;
+}
+
+div.thai {
+	background-color: darkslateblue; 
+	color: white;
+	padding:7px 39px 7px 7px;
+	position: relative;
+	z-index: 2;
+}
+
+div.english {
+	background-color: #e1e8f0;
+	padding:7px 7px 7px 7px;
+}
+
+img.play1, img.playing {
+	height:40px;
+	padding-left:7px;
+}
+
+img.playing {
+	display:none;
+}
+
+audio {
+	width:100px;
+	position: absolute;
+	z-index:-1;
+}
+
+div.frame {
+	padding: 5px;
+	text-align: left;
+	z-index: 0;
+}
+
+div.frame-highlight {
+	background-color:#6ed3cf;
+	z-index: 0;
+}
+
+div.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+}
+
+div.offline {
+    margin-top: 50px;
+    text-align: center;
+	font-size: 2.5em;
+	padding: 50px;
+}
+
+button.navigation {
+	width:100%;
+	padding:7px;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+</style>
+<script>
+var playlist;
+var frames;
+var pause;
+var playing;
+var playingid;
+
+function playaudio(id) {
+	try {
+		if (playing) {
+			playing.pause();
+			playing.currentTime = 0;
+			$('#playing-' + playingid).hide();
+			$('#play-' + playingid).show();
+			window.plugins.insomnia.allowSleepAgain();
+		}
+		$('#play').show();
+		$('#pause').hide();
+		var audio = document.getElementById('audio-' + id);
+		playing = audio;
+		playingid = id;
+		audio.onended = function() {
+			playing = undefined;
+			$('#playing-' + id).hide();
+			$('#play-' + id).show();
+		}
+		audio.play();
+		$('.frame').removeClass('frame-highlight');
+		$('#frame-' + id).addClass('frame-highlight');
+		$('#play-' + id).hide();
+		$('#playing-' + id).show();
+	} catch (error) {
+		alert(error);
+	}
+
+}
+
+function playAll() {
+	pause = false;
+	window.plugins.insomnia.keepAwake();
+	if (playing) {
+		playing.pause();
+		playing.currentTime = 0;
+		playing = undefined;
+		$('#playing-' + playingid).hide();
+		$('#play-' + playingid).show();
+	}
+	$('#play').hide();
+	$('#pause').show();
+	if (playlist == undefined || playlist.length == 0) {
+		playlist = $("audio").toArray();
+		frames = $(".frame").toArray();
+	}
+	playNext();
+}
+
+function playNext() {
+	if (!pause) {
+		if ((elem = playlist.shift()) != null) {
+		
+			var frame = frames.shift();
+			playing = elem;
+			
+			elem.onended = function(){
+				playing = undefined;
+				playNext();
+			};
+			$('.frame').removeClass('frame-highlight');
+			$('#' + frame.id).addClass('frame-highlight');
+			elem.play();
+
+			$('html,body').animate({
+				scrollTop: $('#' + frame.id).offset().top - 60
+			});
+		} else {
+			//finished
+			$('#play').show();
+			$('#pause').hide();
+			window.plugins.insomnia.allowSleepAgain();
+		}
+	}
+}
+
+function pauseAll() {
+	pause = true;
+	if (playing) {
+		playing.pause();
+		playing.currentTime = 0;
+	}
+	$('#pause').hide();
+	$('#play').show();
+	window.plugins.insomnia.allowSleepAgain();
+}
+
+function handleTimeout() {
+	$.getJSON("js/thai.json", function(data) {
+		var templateOffline = $('#t-offline').html();
+    	var output = Mustache.render(templateOffline, data);
+    	$('div#offline').html(output);
+
+		$('div#main').hide();
+		$('div#offline').show();
+	});
+    
+}
+
+$(document).ready(function(){
+    lessonId = GetURLParameter('lessonId');
+
+    $('#sidenav').load("sidenav.html");
+
+	$.ajax({
+		url: "https://sukhajata.com/m/song.php",
+		data: {
+			lessonId: lessonId
+		},
+		error: function() {
+			handleTimeout();
+		},
+		success: function(response) {
+			$('#main').html(response);
+		},
+		timeout: 5000
+	});
+
+
+});
+</script>
+</head>
+<body>
+    <div class="navbar">
+        <span class="menu" onclick="openNav()">&#9776;</span>
+		<img class="play" id="play" src="img/ic_play.png" onclick="playAll()"/>
+	    <img class="pause" id="pause" src="img/ic_pause.png" onclick="pauseAll()"/>					
+    </div>
+    <div id="sidenav" class="sidenav">
+	</div>
+	
+    <div id="main" class="main">
+	</div>
+	
+	<div id="offline" style="display: none">
+	</div>
+	
+	<script id="t-offline" type="text/html">
+		<div class="offline">{{noConnection}}</div>
+		<button class="navigation" onclick="window.location.reload()">{{refresh}}</button>
+	</script>
+
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

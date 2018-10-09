@@ -1,0 +1,11 @@
+<!-- teaching -->
+<p class="label-thai"><%= Content_Thai %></p>
+<table>
+<% $.each(Medias, function(i, media) { %>
+    <tr>
+        <td class="frame"><button class="choice-english" onclick="speakButton('<%= escape_quotes(media.English) %>', this)"><%= media.English %><br/><%= media.Thai %><br/><%= media.Notes %></button></td>
+    </tr>
+<% }); %>
+</table>
+
+<button class="navigation" onclick="moveNext()">ต่อไป</button>

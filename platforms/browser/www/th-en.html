@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="robots" content="index, follow">
+<head>
+<script src="js/jquery.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/mustache.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/sidenav.css"/>
+<style type="text/css">
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+	margin-bottom:4px;
+    transition: 0.4s;
+}
+
+button.accordion.active, button.accordion:hover {
+    background-color: #ccc; 
+}
+
+div.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+}
+
+div.choice-english {
+	width:100%;
+	background-color: white;
+	border: none;
+	text-align: center;
+	display: inline-block;
+	font-size: 1em;
+	cursor: pointer;
+}
+
+
+button.choice-english.active, button.choice-english:hover {
+	background-color: #BBDEFB;
+	
+}
+
+div.thai, div.english {
+	color: white;
+	background-color: #303F9F; /* Dark blue */
+}
+
+div.english {
+	padding:10px 10px 5px 10px;
+}
+
+div.thai {
+	padding:5px 10px 10px 10px;
+}
+
+div.notes {
+	background-color: #C5CAE9;
+	padding:4px;
+}
+
+div.frame {
+	padding: 5px;
+	background-color: #fff;
+}
+
+div.frame-highlight {
+	background-color:#4CAF50; /* Green */
+	padding: 5px;
+}
+
+div.offline {
+    margin-top: 50px;
+    text-align: center;
+	font-size: 1.5em;
+	padding: 50px;
+}
+
+button.navigation {
+	width:100%;
+	padding:7px;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+</style>
+<script>
+function handleTimeout() {
+	$.getJSON("js/thai.json", function(data) {
+		var templateOffline = $('#t-offline').html();
+    	var output = Mustache.render(templateOffline, data);
+    	$('div#offline').html(output);
+
+		$('div#main').hide();
+		$('div#offline').show();
+	});
+    
+}
+
+document.addEventListener('deviceready', function () {
+	$('#sidenav').load("sidenav.html");
+
+	$.ajax({
+		url: "https://sukhajata.com/m/th-en.php", 
+		data: {
+			id: GetURLParameter('id')
+		},
+		error: function() {
+			handleTimeout();
+		},
+		success: function(response) {
+			$('#main').html(response);
+		},
+		timeout: 5000
+	});
+	
+}, false);
+
+</script>
+</head>
+<body>
+	<div class="navbar">
+		<span class="menu" onclick="openNav()">&#9776;</span>
+	</div>
+	<div id="sidenav" class="sidenav">
+	</div>
+	
+	<!-- content -->
+	<div id="main" class="main">
+	</div>
+
+	<div id="offline" style="display: none">
+	</div>
+	
+	<script id="t-offline" type="text/html">
+		<div class="offline">{{noConnection}}</div>
+		<button class="navigation" onclick="window.location.reload()">{{refresh}}</button>
+	</script>
+
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

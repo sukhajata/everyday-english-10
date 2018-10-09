@@ -1,0 +1,29 @@
+<!-- Question -->
+<table>
+    <tr>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(TextToSpeak) %>')"/></td>
+        <td style="text-align:left"><div class="label-english"><%= LabelEnglish %></div></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>
+</table>
+
+<% shuffle(Medias) %>
+
+<table>
+<% $.each(Medias, function(i, media) { %>
+    <tr>
+    <% if (media.IsTarget == "1") { %>
+        <td class="frame"><button class="choice-thai" onclick="highlightRight(this)" ><%= media.English %></button></td>
+    <% } else { %>
+        <td class="frame"><button class="choice-thai" onclick="highlightWrong(this)"><%= media.English %></button></td>
+    <% } %>
+    </tr>
+<% }); %>	
+</table>
+
+<% if (ImageFileName != '') { %>
+    <img class="single" src="<%= imageUrl + ImageFileName %>"/>
+<% } %>

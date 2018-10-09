@@ -1,0 +1,28 @@
+<!-- Missing word writing -->
+<table>
+<% if (HasAudio) { %>
+    <tr>
+        <td style="text-align:left"><audio autoplay controls src="<%= audioUrl + AudioFileName %>"></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-english" id="mww_content"><%= LabelEnglish %></div></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>
+<% } else { %>
+    <tr>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(TextToSpeak) %>')"/></td>
+        <td style="text-align:left"><div class="label-english" id="mww_content" ><%= LabelEnglish %></div></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>
+    
+<% } %>
+</table>
+
+<input type="text" id="mww_input"  onkeyup="checkText(this, '<%= escape_quotes(Medias[0].English) %>')" />
+<button class="navigation-disabled" id="next" onclick="moveNext()" disabled>ต่อไป</button>
+<button class="navigation-cheat" onclick="moveNextCheat('<%= Cheat %>')">ไม่ได้</button>

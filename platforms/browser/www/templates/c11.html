@@ -1,0 +1,20 @@
+<!-- matching pairs image -->
+<table>
+<% $.each(Medias, function(i, media) { 
+    var txt = media.English;
+    var txt = txt.charAt(0).toUpperCase() + txt.substr(1); %>
+    <tr>
+        <td class="frame"><button class="choice-english" onclick="selectEnglishText2('<%= media.Id %>', this, '<%= escape_quotes(media.English) %>')" ><%= txt %></button></td>
+    </tr>
+<% }); %>
+</table>
+
+<% shuffle(Medias) %>
+
+<table>
+<% $.each(Medias, function(i, media) { %>
+    <tr>
+        <td class="frame"><image class="matching" src="<%= imageUrl + media.ImageFileName %>" onclick="selectImage('<%= media.Id %>', this)" /></td>
+    </tr>
+<% }); %>
+</table>

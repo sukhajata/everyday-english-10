@@ -1,0 +1,42 @@
+<!-- translate -->
+<table>
+<% if (HasAudio) { %>
+    <tr>
+        <td style="text-align:left"><audio autoplay controls src="<%= audioUrl + AudioFileName %>"></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-english" id="target"></div></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>
+<% } else { %>
+    <tr>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(TextToSpeak) %>')"/></td>
+        <td style="text-align:left"><div class="label-english" id="target"></div></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>    
+<% } %>
+</table>
+
+<% shuffle(Medias) %>
+
+<div class="flex-wrap">
+<% $.each(Medias, function(i, media) { 
+    var txt = media.English;
+    if (txt == 'I' || txt == "I'll" || txt == "I've" || txt == "I'd") {
+        
+    } else {
+        txt = txt.toLowerCase();
+    } %>
+    
+    <div class="frame-translate">
+        <button class="translate" id="<%= media.MediaOrder %>" onclick="selectTranslate('<%= media.MediaOrder %>', this, '<%= escape_quotes(txt) %>')"  ><%= txt %></button>
+    </div>
+    
+<% }); %>
+</div>
+
+<button class="navigation-disabled" id="next" onclick="moveNext()">ต่อไป</button>

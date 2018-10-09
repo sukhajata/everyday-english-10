@@ -1,0 +1,15 @@
+<!-- Song -->
+<p class="label-thai"><%= Content_Thai %></p>
+
+<table>
+<% $.each(Medias, function(i, media) { %>
+    <tr>
+        <td style="text-align:left"><audio preload controls src="<%= audioUrl + media.AudioFileName %>" /></td>
+    </tr>
+    <tr>
+        <td class="lyric"><%= media.English %><br/><%= media.Thai %></td>
+    </tr>
+<% }); %>
+</table>
+
+<button class="navigation" onclick="moveNext()">ต่อไป</button>

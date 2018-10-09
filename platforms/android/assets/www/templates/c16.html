@@ -1,0 +1,18 @@
+<!-- Conversation -->
+<% if (ImageFileName != '') { %>
+<img class="single" src="<%= imageUrl + ImageFileName %>"/>
+<% } %>
+<br/>
+
+<% var count = 1 %>
+<% $.each(Medias, function(i, media) { 
+    if (count % 2 == 1) { %>
+<div style="float:right"><button class="triangle-isosceles right" onclick="speak('<%= escape_quotes(media.English) %>')" ><%= media.English %><br/><%= media.Thai %></button></div>
+    <% } else { %>
+<div style="float:left" ><button class="triangle-isosceles left" onclick="speak('<%= escape_quotes(media.English) %>')" ><%= media.English %><br/><%= media.Thai %></button></div>
+    <% } %>
+    <div style="clear:both"/>
+    <% count++; %>
+<% }); %>
+
+<button class="navigation" onclick="moveNext()">ต่อไป</button>

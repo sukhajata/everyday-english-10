@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="robots" content="index, follow">
+<head>
+<script src="js/jquery.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/mustache.min.js"></script>
+<script src="js/ejs.min.js"></script>
+<script src="js/lokijs.js"></script>
+<script src="js/loki-indexed-adapter.js"></script>
+<link rel="stylesheet" type="text/css" href="css/sidenav.css">
+<link rel="stylesheet" type="text/css" href="css/spinner.css">
+<style type="text/css">
+
+input[type=text],input[type=number]{
+	height:20px;
+	width:95%;
+	margin-bottom:10px;
+}
+	
+button.navigation {
+	width:100%;
+	padding:7px;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+button.lesson, button.lesson-completed, button.lesson-int, button.lesson-completed-int {
+	-webkit-appearance: button;
+	-moz-appearance: button;
+
+	width:100%;
+	border: none;
+	padding: 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor:pointer;
+}
+
+button.lesson {
+	background-color: #FFA000; /* Dark orange */
+	color: white;
+}
+
+button.lesson-completed {
+	background-color: #FFECB3; /* Light orange */
+	color: #757575;
+}
+
+button.lesson-int {
+	background-color: #303F9F; /* Dark blue */
+	color: white;
+}
+
+button.lesson-completed-int {
+	background-color: #BBDEFB; /* Light blue */
+	color: #757575;
+}
+
+button.lesson-completed.active, button.lesson-completed:hover, button.lesson.active, button.lesson:hover{
+	background-color:#eee;
+	color: #757575;
+}
+
+
+button.lesson-completed-int.active, button.lesson-completed-int:hover, button.lesson-int.active, button.lesson-int:hover {
+	background-color: #eee;
+	color: #757575;
+}
+
+p.label-english {
+	font-size: 16px;
+	padding:10px;
+}
+
+p.label-thai {
+	font-size: 18px;
+	padding:10px;
+}
+
+table {
+		width:100%;
+}
+
+td.frame {
+	padding: 6px;
+	width: 100%;
+}
+
+
+td.frame-highlight {
+	padding:6px;
+	width: 100%;
+	background-color:#4CAF50; /* Green */
+}
+
+img.content {
+	max-width:100%;
+	max-height:30%;
+}
+
+a.text {
+	font-size:1.2em;
+	padding:8px 10px 0px 0px;
+	display:block;
+	float:left;
+}
+
+div.error {
+	margin: auto;
+	font-size: 120%;
+    width: 50%;
+    padding: 10px;
+	text-align:center;
+	display:none;
+}
+
+img.google {
+	width:150px;
+}
+
+div.offline {
+    margin-top: 50px;
+    text-align: center;
+	font-size: 1.5em;
+	padding: 50px;
+}
+
+</style>
+
+<script>
+const dbName = "lessons";
+
+function rate() {
+	var r = confirm("หากคุณชอบแอปนี้โปรดให้ห้าดาว");
+    if (r == true) {
+        window.location="https://play.google.com/store/apps/details?id=com.sukhajata.everydayenglish";
+    } else {
+        
+    }
+}
+
+function launchLesson(id) {
+
+	window.location = "lesson.html?lessonId=" + id;
+}
+
+/*
+function loadContent() {
+	var localVersion = 59;	
+
+	$.ajax({
+		dataType: "json",
+		url: "https://sukhajata.com/api/home.php",
+		data: {
+			userId: localStorage.getItem('userId'),
+			source: 2,
+			lanId: 1
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log(errorThrown);
+			handleTimeout();
+		},
+		success: function(data) {
+			$('#loader').hide();
+			
+			$.get('templates/t-lesson.html')
+			.then((template) => {
+				$.each(data, function(i, item){
+					
+					var html = ejs.render(template, item);
+					console.log(html);
+					$('#lesson-table').append(html);
+				})
+			})
+			.then(() => {
+				if (typeof GetURLParameter("lessonId") != 'undefined' && GetURLParameter("lessonId")> 0) {
+					var lid = GetURLParameter("lessonId");
+					
+					$('html,body').animate({
+						scrollTop: $("#" + lid).offset().top - 10
+					});
+				} else {
+					window.scrollTo(0,document.body.scrollHeight);
+				}
+
+			});
+			
+			/*$('#div1').html(response);
+			$("#firstName").html(firstName);
+			
+			
+		},
+		timeout: 8000
+	});
+
+}
+*/
+
+
+function handleTimeout() {
+	$.getJSON("js/thai.json", function(data) {
+		var templateOffline = $('#t-offline').html();
+    	var output = Mustache.render(templateOffline, data);
+    	$('div#offline').html(output);
+
+		$('div#loader').hide();
+		$('div#div1').hide();
+		$('div#offline').show();
+	});
+    
+}
+/*
+var db;
+
+function openDb() {
+	var request = window.indexedDB.open(dbName, 2);
+	request.onerror = function(event) {
+		alert("Error opening db");
+	};
+
+	request.onupgradeneeded = function(event) {
+		var db = event.target.result;
+		var objectStore = db.createObjectStore("lessons", {keyPath: "Id", autoIncrement: false});
+		objectStore.createIndex("LessonOrder", "LessonOrder", {unique: true});
+		objectStore.createIndex("ModuleId", "ModuleId", {unique: false});
+		objectStore.transaction.oncomplete = function(event) {
+		
+		};
+	};
+
+	request.onsuccess = function(event){
+		db = event.target.result;
+		//loadData();
+
+		var objectStore = db.transaction(["lessons"]).objectStore("lessons");
+		var request = objectStore.get("1");
+		
+		request.onerror = function(event) {
+			alert("Unable to retrieve data from database!");
+		};
+		
+		request.onsuccess = function(event) {
+			console.log(event.target);
+			if(event.target.result) {
+				console.log(event.target.result);
+			} else {
+				console.log("not found!");
+			}
+		};
+	};
+}
+
+function loadData() {
+	
+	$.getJSON(
+		"js/lessons.json",
+		function (data) {
+			var lessonObjectStore = db.transaction("lessons", "readwrite").objectStore("lessons");
+			$.each(data, function(i, lesson) {
+				console.log(lesson);
+				var request = lessonObjectStore.add(lesson);
+				request.onsucess = function(event) {
+					console.log("added");
+				};
+				request.onerror = function(event){
+					console.log("error adding to db");
+					console.log(event);
+				};
+			});
+		}
+	);
+
+}
+
+function read() {
+	
+   var objectStore = db.transaction(["lessons"]).objectStore("lessons");
+   var request = objectStore.count();
+   
+   request.onerror = function(event) {
+      alert("Unable to retrieve daa from database!");
+   };
+   
+   request.onsuccess = function(event) {
+      console.log(request.result);
+     
+   };
+}
+*/
+
+function init_loki() {
+	var idbAdapter = new LokiIndexedAdapter();
+	dbLoki = new loki('loki.json', {
+		adapter: idbAdapter,
+		autoload: true,
+		autoloadCallback : databaseInitialize,
+		autosave: true, 
+		autosaveInterval: 5000
+	});
+}
+
+function databaseInitialize() {
+	if (!dbLoki.getCollection("home")) {
+		console.log('new way');
+		var homeCollection = dbLoki.addCollection('home', {unique:['Id'], indices:['Completed', 'LessonOrder']});
+
+		$.getJSON('https://sukhajata.com/api/home.php', {userId: localStorage.getItem('userId')})
+		.then((data) => {
+			homeCollection.insert(data);
+			show_lessons();
+		});
+
+	} else {
+		console.log('old way');
+		show_lessons();
+	}
+}
+
+function show_lessons() {
+	var homeCollection = dbLoki.getCollection("home");
+	var results = homeCollection.chain().find({'Completed': true}).simplesort('LessonOrder').data();
+	var lastOrder = parseInt(results[results.length - 1].LessonOrder) + 2;
+
+	var results2 = homeCollection.find({'LessonOrder': {'$lte': lastOrder}});
+	$.get('templates/t-lesson.html')
+	.then((template) => {
+		$.each(results2, function(i, item){
+			var html = ejs.render(template, item);
+			$('#lesson-table').append(html);
+		});
+	})
+	.then(() => {
+		$('#loader').hide();
+		scroll();
+	});
+}
+
+function scroll() {
+	if (typeof GetURLParameter("lessonId") != 'undefined' && GetURLParameter("lessonId")> 0) {
+		var lid = GetURLParameter("lessonId");
+		
+		$('html,body').animate({
+			scrollTop: $("#" + lid).offset().top - 10
+		});
+	} else {
+		window.scrollTo(0,document.body.scrollHeight);
+	}
+}
+
+function showAds() {
+	var admobid = {};
+	if( /(android)/i.test(navigator.userAgent) ) { // for android & amazon-fireos
+		admobid = {
+		banner: 'ca-app-pub-8944555977163246/4042150625', // or DFP format "/6253334/dfp_example_ad"
+		interstitial: 'ca-app-pub-8944555977163246/7516076601'
+		};
+	}/* else if(/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
+		admobid = {
+		banner: 'ca-app-pub-xxx/zzz', // or DFP format "/6253334/dfp_example_ad"
+		interstitial: 'ca-app-pub-xxx/kkk'
+		};
+	} else { // for windows phone
+		admobid = {
+		banner: 'ca-app-pub-xxx/zzz', // or DFP format "/6253334/dfp_example_ad"
+		interstitial: 'ca-app-pub-xxx/kkk'
+		};
+	}*/
+
+	if(AdMob) {
+		AdMob.createBanner({
+			adId: admobid.banner,
+			position: AdMob.AD_POSITION.BOTTOM_CENTER,
+			autoShow: true 
+		});
+	} 
+}
+
+function init_ads(){
+	
+	if (localStorage.getItem('full') == undefined || localStorage.getItem('full') == '') {
+		$.get(
+			"https://sukhajata.com/api/hasPurchased.php",
+			{userId: localStorage.getItem('userId')}
+		)
+		.then((result) => {
+			if (result == "1") {
+				localStorage.setItem('full', '1');
+			} else if (result == '0') {
+				localStorage.setItem('full', '0')
+			}
+
+			if (result != "1") {
+				showAds();
+			}
+		});
+	} else if (localStorage.getItem('full') == '0') {
+		showAds();
+	}
+}
+
+document.addEventListener('deviceready', function () {
+
+	init_loki();
+	
+	$('#sidenav').load("sidenav.html");
+
+	init_ads();
+	
+}, false);
+
+</script>
+
+</head>
+<body>
+	<div class="navbar">
+		<span class="menu" onclick="openNav()">&#9776;</span>
+	</div>
+	<div id="sidenav" class="sidenav">
+	</div>
+
+	<div id="div1" class="main"  >
+		<table id="lesson-table">
+		</table>
+	</div>
+
+	<div id="loader"  class="loading">
+	</div>
+
+	<div id="offline" style="display: none">
+	</div>
+
+	<div id="payment-error" style="display:none">
+	</div>
+
+	<script id="t-offline" type="text/html">
+		<div class="offline">{{noConnection}}</div>
+		<button class="navigation" onclick="window.location.reload()">{{refresh}}</button>
+	</script>
+
+	<script id="t-payment-error" type="text/html">
+		<div class="error">{{paymentError}}</div>
+	</script>
+	
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+
+</body>
+</html>

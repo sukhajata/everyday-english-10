@@ -1,0 +1,23 @@
+<%
+var cc = "lesson";
+if (Completed) {
+    cc += "-completed";
+    if (ModuleId == 4) {
+        cc += "-int";
+    }
+} else if (ModuleId == 4) {
+    cc += "-int";
+}
+%>
+<tr>
+    <td class="frame">
+        <button id="<%= Id %>" class="<%= cc %>" onclick="launchLesson('<%= Id %>')" >
+            <div style="float:left"><%= Name %>&nbsp;&nbsp;</div>
+            <% if (Completed) { %>
+            <div style="float:right"><%= Correct + '/' + Sum %></div>
+            <% } %>
+            <div style="clear:both"/>
+            <%= Description %>
+        </button>
+    </td>
+</tr>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="robots" content="index, follow">
+<head>
+<script src="js/jquery.js"></script>
+<script src="js/mustache.min.js"></script>
+<script src="js/functions.js"></script>
+<link rel="stylesheet" type="text/css" href="css/spinner.css">
+<style type="text/css">
+body {
+	margin : 30px;
+	font : 100% "Arial Black", Gadget, sans-serif;
+}
+
+div.signing {
+	text-align: left;
+}
+
+div.signing input[type=text], div.signing input[type=number], div.signing input[type=email],
+div.signing input[type=password] {
+	text-align: left;
+}
+
+div.signing-rtl {
+	text-align: right;
+}
+
+div.signing-rtl  input[type=text], div.signing-rtl  input[type=number], div.signing-rtl  input[type=email],
+div.signing-rtl  input[type=password] {
+	text-align: right;
+}
+
+input[type=text],input[type=number], input[type=email],input[type=password]{
+	padding:4px;
+	width:100%;
+	margin-bottom:10px;
+}
+	
+input[type=submit], button.login {
+	width:100%;
+	padding:7px;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+input[type=submit]:disabled, button.login:disabled {
+	background-color: #D3D3D3 /* light grey */
+}
+
+input.error {
+	border: solid 2px #FF0000; 
+}
+
+img.single {
+	
+	max-width:100%;
+	padding-bottom:10px;
+	margin:auto;
+	display:block;
+}
+
+a {
+	margin:10px 0 10px 4px;
+	display:block;
+}
+
+div.error {
+	font-size:1.2em;
+	display:none;
+	color:red;
+	padding:10px 0 10px 4px;
+}
+
+div.offline {
+    margin-top: 50px;
+    text-align: center;
+	font-size: 1.5em;
+	padding: 50px;
+}
+</style>
+</head>
+<body>
+<script>
+
+function login_google() {
+
+	$("div#loader").show();
+	$("div#form_login").hide();
+	
+	window.plugins.googleplus.trySilentLogin(
+		{
+		  //'scopes': '... ', // optional - space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
+		  'webClientId': '360023939896-8aju3ggkripjggi2im4r5lcl7k5b2a15.apps.googleusercontent.com', // optional - clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
+		  'offline': true, // Optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+		},
+		function (obj) { // silent login success
+		
+			localStorage.setItem('googleId', obj.userId);
+			localStorage.setItem('email', obj.email);
+			localStorage.setItem('firstName', obj.givenName);
+			localStorage.setItem('lastName', obj.familyName);
+			//obj.idToken        // idToken that can be exchanged to verify user identity.
+			//obj.serverAuthCode // Auth code that can be exchanged for an access token and refresh token for offline access
+			//obj.accessToken    // OAuth2 access token
+			
+			//Login complete. Send to server
+			$.ajax({
+				url: "https://sukhajata.com/m/login2.php",
+				data: {
+					googleId: obj.userId,
+					email: obj.email,
+					firstName: obj.givenName,
+					lastName: obj.familyName
+				},
+				error: function() {
+					handleTimeout();
+				},
+				success: function(result){
+					if (result > 0) {
+						localStorage.setItem('userId', result);
+						window.location = "home.html";
+					} else if (result == -1) {
+						$("div#loader").hide();
+						$("div#form_login").show();
+						$('#error').html('ไม่พบอีเมล');
+						$("#error").show();
+					} else if (result == -2) {
+						$("div#loader").hide();
+						$("div#form_login").show();
+						$("div#error").html("รหัสผ่านผิด");
+						$("#error").show();
+					}
+				},
+				timeout: 3000
+			});
+			
+		},	
+		function (msg) { //silent login failure
+	
+		}
+	);
+	
+	//Initiate normal login
+	window.plugins.googleplus.login(
+	{
+	  //'scopes': '... ', // optional - space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
+	  'webClientId': '360023939896-8aju3ggkripjggi2im4r5lcl7k5b2a15.apps.googleusercontent.com', // optional - clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
+	  'offline': true, // Optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+	},
+	function (obj) { //login success
+	 
+		//record variables locally
+		localStorage.setItem('googleId', obj.userId);
+		localStorage.setItem('email', obj.email);
+		localStorage.setItem('firstName', obj.givenName);
+		localStorage.setItem('lastName', obj.familyName);
+		//obj.idToken        // idToken that can be exchanged to verify user identity.
+		//obj.serverAuthCode // Auth code that can be exchanged for an access token and refresh token for offline access
+		//obj.accessToken    // OAuth2 access token
+		
+		//send to your server
+		$.ajax({
+			url: "https://sukhajata.com/m/login2.php",
+			data: {
+				googleId: obj.userId,
+				email: obj.email,
+				firstName: obj.givenName,
+				lastName: obj.familyName
+			},
+			error: function() {
+				handleTimeout();
+			},
+			success: function(result){
+				if (result > 0) {
+					localStorage.setItem('userId', result);
+					window.location = "home.html";
+				} else if (result == -1) {
+					$("div#loader").hide();
+					$("div#form_login").show();
+					$('#error').html('ไม่พบอีเมล');
+					$("#error").show();
+				} else if (result == -2) {
+					$("div#loader").hide();
+					$("div#form_login").show();
+					$("div#error").html("รหัสผ่านผิด");
+					$("#error").show();
+				}
+			},
+			timeout: 3000
+		});
+	
+	}, 
+	function (msg) { //login failure
+		alert("Error: " + JSON.stringify(msg));
+	});
+	
+}
+
+
+function login_facebook() {
+	$("div#loader").show();
+	$("div#form_login").hide();
+
+	facebookConnectPlugin.login(
+		["public_profile"], //permissions
+		function(response) { //on success
+		
+			if (response.authResponse) {
+				/* Logged into your app and Facebook. */
+				var facebookId = response.authResponse.userID;
+				
+				//optional - get name and email
+				facebookConnectPlugin.api("/me?fields=name,email", ["public_profile"], 
+					function(response) {
+						var email = response.email;
+						var names = response.name.split(" ");
+						var firstName = names[0];
+						var lastName = "";
+						if (names.length > 1) {
+							lastName = names[1];
+						}
+						
+						//record variables locally
+						localStorage.setItem('facebookId', facebookId);
+						localStorage.setItem('email', email);
+						localStorage.setItem('firstName', firstName)
+						localStorage.setItem('lastName', lastName);
+						
+						//send to your server
+						$.ajax({
+							url: "https://sukhajata.com/m/login2.php",
+							data: {
+								facebookId: facebookId,
+								email: email,
+								firstName: firstName,
+								lastName: lastName
+							},
+							error: function() {
+								handleTimeout();
+							},
+							success: function(result){
+								if (result > 0) {
+									localStorage.setItem('userId', result);
+									window.location = "home.html";
+								} else if (result == -1) {
+									$("div#loader").hide();
+									$("div#form_login").show();
+									$('#error').html('ไม่พบอีเมล');
+									$("#error").show();
+								} else if (result == -2) {
+									$("div#loader").hide();
+									$("div#form_login").show();
+									$("div#error").html("รหัสผ่านผิด");
+									$("#error").show();
+								}
+
+							},
+							timeout: 3000
+						});
+						
+				});
+
+			} else {
+				alert('User cancelled login or did not fully authorize.');
+			}
+		}, function (response){
+			alert("Error: " + JSON.stringify(response));
+		});
+}
+
+  
+	function validateForm() {
+		if ($('#firstName').val().length == 0) {
+			document.getElementById('signup').disabled = true;
+			return false;
+		} else if ($('#lastName').val().length == 0) {
+			document.getElementById('signup').disabled = true;
+			return false;
+		} else if ($('#email').val().length == 0) {
+			document.getElementById('signup').disabled = true;
+			return false;
+		} else if (!isEmail($('#email').val())) {
+			document.getElementById('signup').disabled = true;
+			return false;
+		} else if ($('#password').val().length == 0) {
+			document.getElementById('signup').disabled = true;
+			return false;
+		} else if ($('#confirm_password').val().length == 0) {
+			document.getElementById('signup').disabled = true;
+			return false;
+		} else if ($('#password').val() != $('#confirm_password').val()) {
+			document.getElementById('signup').disabled = true;
+			$('#confirm_password').addClass('error');
+			return false;
+		} else {
+			document.getElementById('signup').disabled = false;
+			$('#confirm_password').removeClass('error');
+			return true;
+		}
+		
+	}
+	
+	function validateLogin() {
+		if ($('#email2').val().length == 0) {
+			document.getElementById('login').disabled = true;
+			return false;
+		} else if (!isEmail($('#email2').val())) {
+			document.getElementById('login').disabled = true;
+			return false;
+		} else if ($('#password2').val().length == 0) {
+			document.getElementById('login').disabled = true;
+			return false;
+		} else {
+			document.getElementById('login').disabled = false;
+			return true;
+		}
+	}
+	
+	function isEmail(email) {
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		return regex.test(email);
+	}
+	
+	function showLogin() {
+		$("div#form_signup").hide();
+		$("div#form_login").show();
+		
+		return false;
+	}
+	
+	function showSignup() {
+		$("div#form_signup").show();
+		$("div#form_login").hide();
+		
+		return false;
+	}
+	
+	function signup() {
+		$("div#loader").show();
+		
+		var firstName = $('#firstName').val();
+		var lastName = $('#lastName').val();
+		var email = $('#email').val();
+		var pass = $('#password').val();
+		$.ajax({
+			url : "https://sukhajata.com/m/login2.php",
+			data : {
+				firstName : firstName,
+				lastName :  lastName,
+				email : email,
+				password : pass 
+			},
+			error: function(){
+				handleTimeout();
+			},
+			success: function(result){
+				console.log(result);
+				if (result > 0) {
+					localStorage.setItem('userId', result);
+					window.location = "home.html";
+				} else if (result == -3) {
+					//email already exists
+					$("div#loader").hide();
+					$("div#form_signup").show();
+					$('#error1').html('มีอีเมลอยู่แล้ว');
+					$("#error1").show();
+				} 
+			},
+			timeout: 3000
+		});
+	}
+	
+	function login() {
+		
+		$("div#form_login").hide();
+		$("div#loader").show();
+		var email = $('#email2').val();
+		var pass = $('#password2').val();
+		$.ajax({
+			url: "https://sukhajata.com/m/login2.php",
+			data : {
+				email :email,
+				password : pass
+			},
+			error: function() {
+				handleTimeout();
+			},
+			success: function(result){
+				if (result > 0) {
+					localStorage.setItem('userId', result);
+					window.location = "home.html";
+				} else if (result == -1) {
+					$("div#loader").hide();
+					$("div#form_login").show();
+					$('#error').html('ไม่พบอีเมล');
+					$("#error").show();
+				} else if (result == -2) {
+					$("div#loader").hide();
+					$("div#form_login").show();
+					$("div#error").html("รหัสผ่านผิด");
+					$("#error").show();
+				}
+			},
+			timeout: 2000
+		});
+	}
+
+
+	function handleTimeout() {
+		$.getJSON("js/thai.json", function(data) {
+			var templateOffline = $('#t-offline').html();
+			var output = Mustache.render(templateOffline, data);
+			$('div#offline').html(output);
+
+			$('div#compat').hide();
+			$('div#loader').hide();
+			$('div#offline').show();
+		});
+	}
+		
+	document.addEventListener('deviceready', function () {
+		
+		if (localStorage.getItem('userId') == null || localStorage.getItem('userId') == undefined || localStorage.getItem('userId') == '') {
+			
+			var native = "1";
+			if (localStorage.getItem('native') != null && localStorage.getItem('native') != undefined) {
+				native = localStorage.getItem('native');
+			}
+
+			if (native == "2") {
+				$("#compat").removeClass("signing").addClass("signing-rtl");
+			}
+
+			//templates
+			$.getJSON(
+				"js/thai.json",
+				function(data) {
+					var template = $('#t-signup').html();
+					var output = Mustache.render(template, data);
+					$('#form_signup').html(output);
+
+					var templateLogin = $('#t-login').html();
+					output = Mustache.render(templateLogin, data);
+					$('#form_login').html(output);
+				}
+			);
+
+			$('div#loader').hide();
+			
+		} else {
+			 window.location = "home.html";
+		}
+
+	}, false);
+	
+
+</script>
+
+<div id="compat">
+	<img class="single" src="img/login-facebook.jpg" onclick="login_facebook()" />
+	<img class="single" src="img/login-google.jpg" onclick="login_google()"/>
+	<div id="form_signup">
+
+	</div>
+	<div id="form_login" style="display:none">
+		
+	</div>
+</div>
+	
+<div id="loader"  class="loading">
+</div>
+
+<div id="offline" style="display: none"></div>
+</div>
+
+<script id="t-offline" type="text/html">
+	<div class="offline">{{noConnection}}</div>
+</script>
+
+<script id="t-signup" type="text/html">
+	<div class="error" id="error1">
+	</div>
+	<a href="" onclick="return showLogin()">{{showLogin}}</a>
+	<label for="firstName">{{firstName}}</label> <br/>
+	<input type="text" name="firstName" id="firstName" onkeyup="validateForm()" required /> <br/>
+	<label for="lastName">{{lastName}}</label><br/>
+	<input type="text" name="lastName" id="lastName" onkeyup="validateForm()" required /> 
+	<label for="email">{{email}}</label><br/>
+	<input type="email" name="email" id="email" onkeyup="validateForm()" required /> 
+	<label for="password">{{choosePassword}}</label><br/>
+	<input type="password" name="password" id="password" onkeyup="validateForm()" required /> 
+	<label for="confirmPassword">{{confirmPassword}}</label><br/>
+	<input type="password" name="confirm_password" id="confirm_password" onkeyup="validateForm()" required /> 
+	<span id="message"></span>
+	<button class="login" id="signup" disabled onclick="signup()">{{login}}</button>
+</script>	
+<script id="t-login" type="text/html">
+	<div class="error" id="error">
+	</div>
+	<a href="" onclick="return showSignup()">{{showSignup}}</a>
+	<label for="email">{{email}}</label><br/>
+	<input type="email" name="email2" id="email2" onkeyup="validateLogin()" required /> 
+	<label for="password">{{password}}</label><br/>
+	<input type="password" name="password2" id="password2" onkeyup="validateLogin()" required /> 
+	<span id="message"></span>
+	<button class="login" id="login" disabled onclick="login()">{{login}}</button>
+</script>
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

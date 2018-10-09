@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "Everyday English",
+  "short_name": "Everyday English",
+  "version": "com.sukhajata.everydayenglish",
+  "description": "An app for learning English.",
+  "author": "Tim Cranfield",
+  "icons": [],
+  "start_url": "index.html"
+}

@@ -1,0 +1,26 @@
+<!-- listening -->
+<table>
+<% if (HasAudio) { %>
+    <tr>
+        <td style="text-align:left"><audio autoplay controls src="<%= audioUrl + Target.AudioFileName %>"/></td>
+    </tr> 
+<% } else { %>
+    <tr>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(TextToSpeak) %>')"/></td>
+    </tr>
+<%  } %>
+</table>
+
+<% shuffle(Medias) %>
+
+<table>
+<% $.each(Medias, function(i, media) { %>
+    <tr>
+    <% if (media.IsTarget == "1") { %>
+       <td class="frame"><button class="choice-thai" onclick="highlightRight(this)" ><%= media.English %></button></td>
+    <% } else { %>
+        <td class="frame"><button class="choice-thai" onclick="highlightWrong(this)"><%= media.English %></button></td>
+    <% } %>
+    </tr>
+<% }); %>	
+</table>

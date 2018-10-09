@@ -1,0 +1,237 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="robots" content="index, follow">
+<head>
+<script src="js/jquery.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/mustache.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/sidenav.css">
+<style type="text/css">
+
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+	margin-bottom:4px;
+    transition: 0.4s;
+}
+
+button.accordion.active, button.accordion:hover {
+    background-color: #ccc; 
+}
+
+div.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+}
+
+input[type=text],input[type=number]{
+	height:20px;
+	width:95%;
+	margin-bottom:10px;
+}
+	
+button.navigation {
+	width:100%;
+	padding:7px;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+button.lesson, button.lesson-completed, button.lesson-int, button.lesson-completed-int {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    width:100%;
+	border: none;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor:pointer;
+}
+
+button.lesson {
+	background-color: #FFA000; /* Dark orange */
+	color: white;
+}
+
+button.lesson-completed {
+	background-color: #FFECB3; /* Light orange */
+	color: #757575;
+}
+
+button.lesson-int {
+	background-color: #303F9F; /* Dark blue */
+	color: white;
+}
+
+button.lesson-completed-int {
+	background-color: #BBDEFB; /* Light blue */
+	color: #757575;
+}
+
+button.lesson-completed.active, button.lesson-completed:hover, button.lesson.active, button.lesson:hover{
+	background-color:#eee;
+	color: #757575;
+}
+
+
+button.lesson-completed-int.active, button.lesson-completed-int:hover, button.lesson-int.active, button.lesson-int:hover {
+	background-color: #eee;
+	color: #757575;
+}
+
+
+p.label-english {
+	font-size: 16px;
+	padding:10px;
+}
+
+p.label-thai {
+	font-size: 18px;
+	padding:10px;
+}
+
+table {
+		width:100%;
+}
+
+div.frame {
+	padding: 5px;
+}
+
+div.frame-highlight {
+	padding:5px;
+	background-color:#4CAF50; /* Green */
+}
+
+img.content {
+	max-width:100%;
+	max-height:30%;
+}
+
+div.firstName {
+	padding: 12px 0px 0px 15px;
+	float:left;
+	font-size:16px;
+}
+
+a.text {
+	font-size:1.2em;
+	padding:8px 10px 0px 0px;
+	display:block;
+	float:left;
+}
+
+div.flex-wrap {
+    display: -webkit-flex; /* Safari */
+    -webkit-flex-wrap: wrap; /* Safari 6.1+ */
+    display: flex;   
+    flex-wrap: wrap;
+
+}
+
+button.translate {
+	background-color: #303F9F; /* Dark blue */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor:pointer;
+	font-size: 16px;
+}
+
+div.offline {
+    margin-top: 50px;
+    text-align: center;
+	font-size: 1.5em;
+	padding: 50px;
+}
+</style>
+<script>
+
+function showPanel(id) {
+	$("#div" + id).toggle();
+}
+
+function openNav() {
+	document.getElementById("sidenav").style.width = "250px";
+}
+
+function closeNav() {
+	document.getElementById("sidenav").style.width = "0";
+}
+
+function handleTimeout() {
+	$.getJSON("js/thai.json", function(data) {
+		var templateOffline = $('#t-offline').html();
+    	var output = Mustache.render(templateOffline, data);
+    	$('div#offline').html(output);
+
+		$('div#main').hide();
+		$('div#offline').show();
+	});
+    
+}
+
+document.addEventListener('deviceready', function () {
+	$('#sidenav').load("sidenav.html");
+	
+	$.ajax({
+		url: "https://sukhajata.com/m/vocab.php",
+		error: function() {
+			handleTimeout();
+		},
+		success: function(response) {
+			$('#main').html(response);
+		},
+		timeout: 3000
+	});
+	
+}, false);
+
+</script>
+</head>
+<body>
+	<div class="navbar">
+		<span class="menu" onclick="openNav()">&#9776;</span>
+	</div>
+	<div id="sidenav" class="sidenav">
+	</div>
+	
+	<!-- content -->
+	<div id="main" class="main">
+	</div>
+
+	<div id="offline" style="display: none">
+	</div>
+	
+	<script id="t-offline" type="text/html">
+		<div class="offline">{{noConnection}}</div>
+		<button class="navigation" onclick="window.location.reload()">{{refresh}}</button>
+	</script>
+
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

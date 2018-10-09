@@ -1,0 +1,34 @@
+<!-- bingo -->
+<table>
+    <tr>
+    <% $.each(Medias, function(i, media) { 
+			if (media.IsTarget == 1) { %>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(media.English) %>')"/></td>
+        <td style="text-align:left"><div class="label-thai" id="target" ><%= media.Thai %></div></td>
+			<% } %>
+	<% }); %>
+    </tr>
+</table>
+
+<% shuffle(Medias) %>
+
+<div class="flex-wrap">
+<% $.each(Medias, function(i, media) { 
+    var txt = media.English;
+    if (txt == 'I' || txt == "I'll" || txt == "I've" || txt == "I'd") {
+        
+    } else {
+        txt = txt.toLowerCase();
+    }
+    
+    if (media.IsTarget == "1") { %>
+    <div class="frame-translate">
+        <button class="translate" id="<?php echo $media['MediaOrder']; ?>" onclick="highlightRightBingo(this)" ><%= txt %></button>
+    </div>
+    <% } else { %>
+    <div class="frame-translate">
+        <button class="translate" id="<?php echo $media['MediaOrder']; ?>" onclick="highlightWrongBingo(this)" ><%= txt %></button>
+    </div>
+    <% } %>
+<% }); %>
+</div>

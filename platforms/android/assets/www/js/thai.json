@@ -1,0 +1,15 @@
+{
+    "showLogin": "มีบัญชีอยู่แล้ว",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "email" : "อีเมล",
+    "password": "รหัสผ่าน",
+    "choosePassword": "เลือกรหัสผ่าน",
+    "confirmPassword": "ยืนยันรหัสผ่าน",
+    "showSignup" :"ลงทะเบียน",
+    "login": "เข้า",
+    "timeout": "หมดเวลาการเชื่อมต่อ",
+    "refresh": "รีเฟรช",
+    "noConnection": "ไม่มีการเชื่อมต่อ",
+    "paymentError": "เกิดข้อผิดพลาดในการประมวลผลคำขอ โปรดติดต่อ sukhajata@gmail.com"
+}

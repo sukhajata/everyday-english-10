@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="robots" content="index, follow">
+<title>Everday English</title>
+<script src="js/jquery.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/mustache.min.js"></script>
+<script src="js/ejs.min.js"></script>
+<script src="js/lokijs.js"></script>
+<script src="js/loki-indexed-adapter.js"></script>
+<script src="js/date-format.js"></script>
+<link rel="stylesheet" type="text/css" href="css/spinner.css">
+<style>
+body {
+	margin:5px;
+}
+
+input[type=text],input[type=number]{
+	height:20px;
+	width:100%;
+	margin-bottom:10px;
+}
+	
+button.navigation {
+	width:100%;
+	margin:0 0 10px 0;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 1em;
+}
+
+
+button.navigation-disabled {
+	width:100%;
+	margin:0 0 10px 0;
+	background-color: #dce1ea; /* Grey */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 1em;
+}
+
+button.navigation-cheat {
+	width:100%;
+	margin:0 0 10px 0;
+	background-color: #E91E63; /* red pink */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 1em;
+}
+
+a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    width:95%;
+	padding:7px;
+	background-color: #303F9F; /* Dark blue */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+button.choice-english {
+	width:100%;
+	background-color: #303F9F; /* Dark blue */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	
+}
+
+button.choice-thai {
+	width:100%;
+	background-color: #303F9F; /* Dark blue */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 18px;
+}
+
+button.translate {
+	background-color: #303F9F; /* Dark blue */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+button.bingo {
+	background-color: #4CAF50; /* green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	margin: 4px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+img.speaker {
+	float:left;
+	width:4%;
+}
+
+div.label-english {
+	float:left;
+	font-size: 16px;
+	padding:2px 5px 2px 5px;
+	margin-bottom:0px;
+}
+
+div.label-thai {
+	float:left;
+	font-size: 1em;
+	padding:0px 5px 0px 5px;
+	margin-bottom:0px;
+}
+
+p.label-english {
+	font-size: 16px;
+	padding:2px 5px 2px 5px;
+	margin-bottom:0px;
+}
+
+p.label-thai {
+	font-size: 18px;
+	padding:2px 5px 2px 5px;
+	margin-bottom:0px;
+}
+
+p.label-instructions {
+	font-size: 18px;
+	padding:0px 0px 0px 15px;
+	margin:0px;
+}
+table {
+	width:100%;
+}
+
+.table{
+    display:table;
+	border-collapse: collapse;
+    width:100%;
+    table-layout:fixed;
+	margin-bottom:0;
+	padding-bottom:0;
+}
+.table_cell{
+    display:table-cell;
+    border:0px;
+}
+.table_cell img {
+	width: 100%;
+}
+
+table.images {
+	width: auto;
+}
+
+td.speaker {
+	/*padding: 0px 0px 0px 15px;*/
+	width:30px;
+	text-align: left;
+}
+
+td.frame {
+	padding: 4px;
+	width: 100%;
+}
+
+td.lyric {
+	text-align: left;
+	padding: 0px 6px 6px 6px;
+	width:100%;
+}
+
+td.frame-wrong {
+	padding:4px;
+	/* width: 100%; */
+	background-color:#E91E63; /* red-pink */
+}
+
+td.frame-highlight {
+	padding:4px;
+	/* width: 100%; */
+	background-color:#4CAF50; /* Green */
+}
+
+div.frame {
+	padding: 4px;
+}
+
+div.frame-highlight {
+	padding:4px;
+	background-color:#4CAF50; /* Green */
+}
+
+div.frame-translate {
+	padding:4px;
+	margin:0px;
+}
+
+div.frame-translate-right {
+	padding: 4px;
+	margin:0px;
+	background-color:#4CAF50; /* green */
+}
+
+div.frame-translate-wrong {
+	padding: 4px;
+	margin:0px;
+	background-color:#E91E63; /* red-pink */
+}
+
+img.content {
+	height:24%;
+	max-width:97%;
+	margin:auto;
+	display:block;
+}
+
+img.single {
+	width:97%;
+	margin:auto;
+	display:block;
+}
+
+img.matching {
+	width:97%;
+	margin:auto;
+	display:block;
+}
+
+div.flex-wrap {
+    display: -webkit-flex; /* Safari */
+    -webkit-flex-wrap: wrap; /* Safari 6.1+ */
+    display: flex;   
+    flex-wrap: wrap;
+	flex:1 0 auto;
+	margin-bottom:4px;
+}
+
+.triangle-isosceles {
+  position:relative;
+  padding:10px;
+  font-size: 16px;
+  margin:3px;
+  color:#000;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
+}
+
+/* Variant : for left/right positioned triangle
+------------------------------------------ */
+
+.triangle-isosceles.left {
+  margin-left:50px;
+  background:#f3961c;
+}
+
+/* Variant : for right positioned triangle
+------------------------------------------ */
+
+.triangle-isosceles.right {
+  margin-right:50px;
+  background:#1c79f3;
+}
+
+
+/* creates triangle */
+.triangle-isosceles:after {
+  content:"";
+  position:absolute;
+  bottom:-15px; /* value = - border-top-width - border-bottom-width */
+  left:50px; /* controls horizontal position */
+  border-width:15px 15px 0; /* vary these values to change the angle of the vertex */
+  border-style:solid;
+  border-color:#f3961c transparent;
+  /* reduce the damage in FF3.0 */
+  display:block;
+  width:0;
+}
+
+/* Variant : top
+------------------------------------------ */
+
+.triangle-isosceles.top:after {
+  top:-15px; /* value = - border-top-width - border-bottom-width */
+  right:50px; /* controls horizontal position */
+  bottom:auto;
+  left:auto;
+  border-width:0 15px 15px; /* vary these values to change the angle of the vertex */
+  border-color:#f3961c transparent;
+}
+
+/* Variant : left
+------------------------------------------ */
+
+.triangle-isosceles.left:after {
+  top:16px; /* controls vertical position */
+  left:-50px; /* value = - border-left-width - border-right-width */
+  bottom:auto;
+  border-width:10px 50px 10px 0;
+  border-color:transparent #f3961c;
+}
+
+/* Variant : right
+------------------------------------------ */
+
+.triangle-isosceles.right:after {
+  top:16px; /* controls vertical position */
+  right:-50px; /* value = - border-left-width - border-right-width */
+  bottom:auto;
+  left:auto;
+  border-width:10px 0 10px 50px;
+  border-color:transparent #1c79f3;
+}
+
+/* totals */
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+	margin-bottom:4px;
+    transition: 0.4s;
+}
+
+button.accordion.active, button.accordion:hover {
+    background-color: #ccc; 
+}
+
+div.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+}
+
+table.center {
+	margin-left:auto;
+	margin-right:auto;
+	border-collapse: collapse;
+}
+
+td {
+	text-align:right;
+	padding:3px;
+}
+
+button.score-pass {
+	background-color: #FFF;
+	padding: 8px;
+	font:2em Arial, sans-serif;
+	font-weight:bold;
+	color:#4CAF50;
+	width:100%;
+	margin-bottom:5px;
+	border:none;
+	outline:none;
+}
+
+button.score-fail {
+	background-color: #FFF;
+	padding: 8px;
+	font:2em Arial, sans-serif;
+	font-weight:bold;
+	color:#E91E63;
+	width: 100%;
+	border:none;
+	outline:none;
+	margin-bottom:5px;
+}
+
+.numberCircle {
+	float:left;
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+    width: 48px;
+    height: 48px;
+    padding:  12px 12px 6px 6px;
+	margin-right:5px;
+	margin-bottom:5px;
+
+    background: #4CAF50;
+    border: 2px solid #4CAF50;
+    color: #FFF;
+    text-align: center;
+
+    font: 32px Arial, sans-serif;
+}
+
+.numberCircleRed {
+	float:left;
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+    width: 48px;
+    height: 48px;
+    padding:  12px 12px 6px 6px;
+	margin-right:5px;
+	margin-bottom:5px;
+
+    background: #E91E63;
+    border: 2px solid #E91E63;
+    color: #FFF;
+    text-align: center;
+
+    font: 32px Arial, sans-serif;
+}
+
+div.offline {
+    margin-top: 50px;
+    text-align: center;
+	font-size: 1.5em;
+	padding: 50px;
+}
+</style>
+<script>
+var selectedId;
+var selectedThaiElement;
+var selectedEnglishElement;
+var selectedImage;
+var currentOrder = 1;
+var targetText = "";
+var wrongCount = 0;
+var correctCount;
+var sayTimeout;
+var lessonData;
+var imageUrl = "https://sukhajata.com/images/";
+var audioUrl = "https://sukhajata.com/audio/";
+var audios;
+var images;
+
+	
+function highlightWrong(param) {
+	param.parentElement.className = "frame-wrong";
+	wrongCount++;
+	//speakIncorrect();
+}
+
+function highlightRight(param) {
+	//speakCorrect();
+	param.parentElement.className = "frame-highlight";
+	moveNext();
+}
+
+
+
+function speakBingo() {
+	var txt = document.getElementById('target').value;
+	speak(txt);
+}
+
+
+
+function highlightRightBingo(element) {
+	element.parentElement.className = "frame-translate-right";
+	moveNext();
+}
+
+function highlightWrongBingo(element) {
+	element.parentElement.className = "frame-translate-wrong";
+}
+
+function selectTranslate (order, element, text) {
+	var div = element.parentElement;
+	var flexbox = div.parentElement;
+		
+	if (order == currentOrder || document.getElementById(order).innerHTML == document.getElementById(currentOrder).innerHTML) {
+		
+		if (targetText == "") {
+			//this is the first word so capitalize it
+			text = text.charAt(0).toUpperCase() + text.slice(1);
+		}
+		
+		targetText = targetText.concat(" ", text);
+		document.getElementById('target').innerHTML = targetText;
+		flexbox.removeChild(document.getElementById(currentOrder).parentElement);
+		currentOrder++;
+		
+		//reset mistakes
+		var mistakes = document.getElementsByClassName("frame-translate-wrong");
+		while(mistakes.length) {
+			mistakes.item(0).className = "frame-translate";
+		}
+				
+		var mediaCount = parseInt(localStorage.getItem("mediaCount"));
+		if (currentOrder > mediaCount) {
+			//finished
+			var button = document.getElementById('next')
+			button.className = "navigation";
+			button.disabled = false;
+			button.focus();
+			
+			while (flexbox.firstChild) {
+				flexbox.removeChild(flexbox.firstChild);
+			}
+			
+			//update display to original including punctuation
+			if (localStorage.getItem('textToSpeak') != '') {
+				document.getElementById('target').innerHTML = localStorage.getItem('textToSpeak');
+			}
+			
+		} else {
+			var next = document.getElementById(currentOrder.toString());
+			if (next) {
+				speak(next.innerHTML); 
+			}  else {
+				//finished
+				var button = document.getElementById('next')
+				button.className = "navigation";
+				button.disabled = false;
+				button.focus();
+				
+				while (flexbox.firstChild) {
+					flexbox.removeChild(flexbox.firstChild);
+				}
+				
+				//update display to original including punctuation
+				if (localStorage.getItem('textToSpeak') != '') {
+					document.getElementById('target').innerHTML = localStorage.getItem('textToSpeak');
+				}
+			}
+			
+		}
+	} else {
+		div.className = "frame-translate-wrong";
+		wrongCount++;
+	}
+}
+
+function selectImage(id, img) {
+	if (img != selectedImage) {
+		if (selectedImage != null) {
+			selectedImage.parentElement.className = "frame";
+		}
+		
+		if (id == selectedId) {
+			//correct
+			//speakCorrect();
+			img.parentElement.className = "frame";
+			selectedEnglishElement.parentElement.className = "frame";
+			img.parentElement.removeChild(img);
+			selectedEnglishElement.parentElement.removeChild(selectedEnglishElement);
+			selectedImage = null;
+			selectedEnglishElement = null;
+			selectedId = 0;
+			correctCount++;
+			if (correctCount == 2) {
+				moveNext();
+			}
+		} else if (selectedEnglishElement != null) {
+			//wrong. deselect
+			//speakIncorrect();
+			wrongCount++;
+			selectedEnglishElement.parentElement.className = "frame";
+			selectedEnglishElement = null;
+			selectedImage = null;
+			selectedId = 0;
+		} else {
+			img.parentElement.className = "frame-highlight";
+			selectedId = id;
+			selectedImage = img;
+		}
+	}
+}
+
+function selectEnglishText2(id, element, text) {
+	speak(text);
+	
+	if (element != selectedEnglishElement) {
+		if (selectedEnglishElement != null) {
+			//deselect
+			selectedEnglishElement.parentElement.className = "frame";
+		}
+		
+		if (id == selectedId) {
+			//correct
+			//speakCorrect();
+			element.parentElement.className = "frame";
+			selectedImage.parentElement.className = "frame";
+			element.parentElement.removeChild(element);
+			selectedImage.parentElement.removeChild(selectedImage);
+			selectedEnglishElement = null;
+			selectedImage = null;
+			selectedId = 0;
+			correctCount++;
+			if (correctCount == 2) {
+				moveNext();
+			}
+		} else if  (selectedImage != null) {
+			//wrong
+			//speakIncorrect();
+			wrongCount++;
+			element.parentElement.className = "frame";
+			selectedImage.parentElement.className = "frame";
+			selectedEnglishElement = null;
+			selectedImage = null;
+			selectedId = 0;
+		} else {
+			element.parentElement.className = "frame-highlight";
+			selectedId = id;
+			selectedEnglishElement = element;
+		}
+	}
+}
+
+function selectEnglishText(id, element, text) {
+	speak(text);
+	
+	if (element != selectedEnglishElement) {
+		if (selectedEnglishElement != null) {
+			//deselect
+			selectedEnglishElement.parentElement.className = "frame";
+		}
+		
+		if (id == selectedId) {
+			//correct
+			//speakCorrect();
+			element.parentElement.className = "frame";
+			selectedThaiElement.parentElement.className = "frame";
+			element.parentElement.removeChild(element);
+			selectedThaiElement.parentElement.removeChild(selectedThaiElement);
+			selectedEnglishElement = null;
+			selectedThaiElement = null;
+			selectedId = 0;
+			correctCount++;
+			if (correctCount == 2) {
+				moveNext();
+			}
+		} else if  (selectedThaiElement != null) {
+			//wrong
+			//speakIncorrect();
+			wrongCount++;
+			element.parentElement.className = "frame";
+			selectedThaiElement.parentElement.className = "frame";
+			selectedEnglishElement = null;
+			selectedThaiElement = null;
+			selectedId = 0;
+		} else {
+			element.parentElement.className = "frame-highlight";
+			selectedId = id;
+			selectedEnglishElement = element;
+		}
+	}
+}
+
+function selectThaiText(id, element) {
+	if (element != selectedThaiElement) {
+		if (selectedThaiElement != null) {
+			//deselect
+			selectedThaiElement.parentElement.className = "frame";
+		}
+		
+		if (id == selectedId) {
+			//correct
+			//speakCorrect();
+			element.parentElement.className = "frame";
+			selectedEnglishElement.parentElement.className = "frame";
+			element.parentElement.removeChild(element);
+			selectedEnglishElement.parentElement.removeChild(selectedEnglishElement);
+			selectedEnglishElement = null;
+			selectedThaiElement = null;
+			selectedId = 0;
+			correctCount++;
+			if (correctCount == 2) {
+				moveNext();
+			}
+		} else if  (selectedEnglishElement != null) {
+			//wrong
+			//speakIncorrect();
+			wrongCount++;
+			element.parentElement.className = "frame";
+			selectedEnglishElement.parentElement.className = "frame";
+			selectedEnglishElement = null;
+			selectedThaiElement = null;
+			selectedId = 0;
+		} else {
+			element.parentElement.className = "frame-highlight";
+			selectedId = id;
+			selectedThaiElement = element;
+		}
+	}
+}
+
+function moveNext() {
+
+	if (lessonData.Id == 44) {
+		moveNextTest();
+	} else {
+		if (wrongCount > 0) {
+			var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+			slideScore.push(0);
+			localStorage.setItem("slideScore", JSON.stringify(slideScore));
+		} else {
+			var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+			slideScore.push(1);
+			localStorage.setItem("slideScore", JSON.stringify(slideScore));
+		}
+		
+		var i = parseInt(localStorage.getItem("i"));
+		i++;
+		localStorage.setItem("i", i);
+
+		var slideCount = parseInt(lessonData.SlideCount);
+		
+		if (i > slideCount) {
+			var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+			var errors = 0;
+			for (var k = 0; k < slideCount; k++) {
+				if (slideScore[k] == 0) {
+					errors++;
+				}
+			}
+
+			//load totals
+			$.ajax({
+				url: "https://sukhajata.com/m/totals2.php",
+				data: {
+					userId : localStorage.getItem('userId'),
+					lessonId : lessonData.Id,
+					errors : errors
+				},
+				error: function() {
+					handleTimeout();
+				},
+				success: function(response) {
+					$('#div1').html(response);
+					$('#stars').empty();
+					window.scrollTo(0,0);
+				},
+				timeout: 5000
+			});
+
+			//insert local db
+			insert_totals(lessonData.Id, errors)
+	
+			//set up notification reminder
+			$.ajax({
+				url: "https://sukhajata.com/m/loadNotifications.php",
+				data: {
+					lessonId: lessonData.Id
+				},
+				dataType: "json",
+				error: function() {
+					//nevermind
+				},
+				success: function(data) {
+					cordova.plugins.notification.local.cancel(1);
+					
+					if (data.text_english != "") {
+						cordova.plugins.notification.local.schedule({
+							id: 1,
+							title: data.text_english,
+							text: data.text_thai,
+							trigger: { every: 'day', count: 5 },
+							icon: 'res://logo.png',
+							launch: true
+						});
+					}
+				},
+				timeout: 3000
+			});
+
+		} else {
+			currentOrder = 1;
+			wrongCount = 0;
+			correctCount = 0;
+			targetText = "";
+			selectedId = 0;
+			selectedThaiElement = null;
+			selectedEnglishElement = null;
+			selectedImage = null;
+			
+			getSlide();
+		}
+	}
+}
+
+function moveNextCheat(cheat) {
+	wrongCount++;
+	
+	if (typeof cheat !== 'undefined') {
+		$('#mww_input').val(cheat);
+		
+		var button = document.getElementById('next')
+		button.className = "navigation";
+		button.disabled = false;
+		button.focus();
+	} else {
+		moveNext();
+	}
+}
+
+function moveNextTest() {
+	
+	var i = parseInt(localStorage.getItem("i"));
+	
+	if (wrongCount > 0) {
+		var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+		slideScore.push(0);
+		localStorage.setItem("slideScore", JSON.stringify(slideScore));
+		
+		//game over
+		$.ajax({
+			url: "https://sukhajata.com/m/test.php",
+			data: {
+				userId: localStorage.getItem("userId"),
+				lessonId: lessonData.Id,
+				i: i
+			},
+			error: function() {
+				handleTimeout();
+			},
+			success: function(result) {
+				window.location = "home.html";
+			},
+			timeout: 5000
+		});
+			
+	} else {
+		var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+		slideScore.push(1);
+		localStorage.setItem("slideScore", JSON.stringify(slideScore));
+	
+		i++;
+		localStorage.setItem("i", i);
+
+		var slideCount = parseInt(lessonData.SlideCount);
+		
+		if (i > slideCount) {
+			var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+			var errors = 0;
+			for (var k = 0; k < slideCount; k++) {
+				if (slideScore[k] == 0) {
+					errors++;
+				}
+			}
+			
+			//completed test
+			$.ajax({
+				url: "https://sukhajata.com/m/test.php",
+				data: {
+					userId: localStorage.getItem("userId"),
+					lessonId: lessonData.Id,
+					i: i
+				},
+				error: function() {
+					handleTimeout();
+				},
+				success: function(result) {
+					window.location = "home.html";
+				},
+				timeout: 5000
+			});
+			
+		} else {
+			currentOrder = 1;
+			wrongCount = 0;
+			correctCount = 0;
+			targetText = "";
+			selectedId = 0;
+			selectedThaiElement = null;
+			selectedEnglishElement = null;
+			selectedImage = null;
+			
+			getSlide();
+		}
+	}
+}
+
+function checkText(element, target) {
+	
+	if (element.value.trim().toLowerCase() == target.trim().toLowerCase()) {
+		var button = document.getElementById('next')
+		button.className = "navigation";
+		button.disabled = false;
+		button.focus();
+	}
+}
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
+
+/*
+function getLesson() {
+	
+	$.getJSON(
+		"js/lessons.json",
+		function (data) {
+			lessonData = data[lessonOrder];
+			localStorage.setItem('slideCount', lessonData.SlideCount);
+			getSlide();
+		}
+	);
+}*/
+
+function loadTemplate(template, data) {
+	var html = ejs.render(template, data);	
+
+	$('#div1').html(html);
+
+	if (data.TextToSpeak != "") {
+		speak(data.TextToSpeak);
+	}
+
+	var slideScore = JSON.parse(localStorage.getItem("slideScore"));
+	var slideCount = parseInt(lessonData.SlideCount);
+
+	$('#stars').empty();
+	for (var k = 0; k < slideCount; k++) {
+		var divId = "star_" + k.toString();
+		var $div = $("<div>", {id: divId, "class":"table_cell"});
+		$("#stars").append($div);		
+				
+		if ( slideScore[k] !== void 0 ) {
+			if (slideScore[k] == 1) {
+				var $img = $("<img>", {"src": "img/ic_star_gold.png"});
+				$("#" + divId).append($img);
+			} else {
+				var $img = $("<img>", {"src": "img/ic_star_pink.png"});
+				$("#" + divId).append($img);
+			}
+		} else {
+			var $img = $("<img>", {"src": "img/ic_star_grey.png"});
+			$("#" + divId).append($img);
+		}
+		
+	}
+}
+
+function getSlide() {
+	var i = parseInt(localStorage.getItem('i'));
+	if (lessonData == null) {
+		init_loki();
+	} else {
+		$.each(lessonData.Slides, function(k, slide) {
+			if (slide.SlideOrder == i) {
+				localStorage.setItem("mediaCount", slide.MediaCount);
+				localStorage.setItem('textToSpeak', slide.TextToSpeak);
+				var catId = slide.CategoryId;
+				var filePath = "templates/c" + catId + ".html";
+
+				$.get(filePath, function(template) {
+					loadTemplate(template, slide);
+				});
+
+			}
+		});
+	
+	}
+
+}
+
+//totals
+function launchLesson(id) {
+	window.location = "lesson.html?lessonId=" + lessonData.Id;
+}
+
+function goHome() {	
+	window.location = "home.html?lessonId=" + lessonData.Id + "&userId=" + userId + "#" + lessonData.Id;
+}
+
+function startAgain(id) {
+	window.location = "lesson.html?lessonId=" + lessonData.Id;
+}
+
+function showWords() {
+	$("#words").toggle();
+}
+
+function handleTimeout() {
+    $.getJSON("js/thai.json", function(data) {
+		var templateOffline = $('#t-offline').html();
+    	var output = Mustache.render(templateOffline, data);
+    	$('div#offline').html(output);
+
+    	$('div#div1').hide();
+		$('div#offline').show();
+	});
+}
+
+var dbLoki;
+
+function init_loki() {
+	var idbAdapter = new LokiIndexedAdapter();
+	dbLoki = new loki('loki.json', {
+		adapter: idbAdapter,
+		autoload: true,
+		autoloadCallback : databaseInitialize,
+		autosave: true, 
+		autosaveInterval: 5000
+	});
+}
+
+function databaseInitialize() {
+	if (!dbLoki.getCollection("lessons")) {
+		//console.log('new db');
+		var lessons = dbLoki.addCollection('lessons', {unique:['Id']});
+		
+		$.getJSON("https://sukhajata.com/api/lesson-dump.php")
+		.then((data) => {
+			$.each(data, function(i, lesson) {
+				lessons.insert(lesson);
+			});
+		})
+		.then(() => {
+			getLessonData();
+		})
+
+  	} else {
+		getLessonData();
+	}
+}
+
+
+function getLessonData() {
+	var lessonId = GetURLParameter('lessonId');
+	var lessons = dbLoki.getCollection('lessons');
+	lessonData = lessons.by('Id', lessonId);
+
+	var imageUrls = new Set(); //adding duplicates is ignored
+	var audioUrls = new Set();
+	$.each(lessonData.Slides, function(i, slide) {
+		if (slide.ImageFileName !== undefined && slide.ImageFileName != "") {
+			imageUrls.add(imageUrl + slide.ImageFileName);
+		}
+		if (slide.AudioFileName != undefined && slide.AudioFileName != "") {
+			audioUrls.add(audioUrl + slide.AudioFileName);
+		}
+
+		$.each(slide.Medias, function(j, media) {
+			if (media.ImageFileName != undefined && media.ImageFileName != "") {
+				imageUrls.add(audioUrl + media.ImageFileName);
+			}
+			if (media.AudioFileName != undefined && media.AudioFileName != "") {
+				audioUrls.add(audioUrl + media.AudioFileName);
+			}
+		});
+	});
+	
+	/*downloader.init({folder: "downloads"});
+	for (let url of urls) {
+		downloader.get(url);
+	}*/
+	$('#loader').hide();
+	getSlide();
+
+	preloadImages(imageUrls);
+	preloadAudio(audioUrls);
+	
+}
+
+function preloadImages(imageUrls) {
+	images = new Array();
+	for (i = 0; i < imageUrls.length; i++) {
+		images[i] = new Image()
+		images[i].src = imageUrls[i]
+	}
+}
+
+function preloadAudio(audioUrls) {
+	audios = new Array();
+	for (i = 0; i < audioUrls.length; i++) {
+		audios[i] = new Audio();
+		audios[i].src= audioUrls[i];
+	}
+}
+
+function insert_totals(id, errors) {
+	var correct = lessonData.SlideCount - errors;
+	var now = new Date();
+	var d = now.format( "isoDateTime");
+	var homeCollection = dbLoki.getCollection('home');
+	var result  = homeCollection.by('Id', id);
+	
+	if (result) {
+		result.Correct = correct;
+		result.Errors = errors;
+		result.Sum = correct + errors;
+		result.Completed = true;
+		result.DateCompleted = d;
+		homeCollection.update(result);
+		dbLoki.save();
+	} 
+}
+
+/*
+function init_json_store() {
+	var lessonId = parseInt(GetURLParameter('lessonId'));
+
+	// Object that defines all the collections.
+	var collections = {
+		lesson: {
+			// Object that defines the Search Fields for the 'lesson' collection.
+			searchFields: {Id: 'integer', LessonOrder: 'integer'}
+		},
+		slide: {
+			searchFields: {Id: 'integer'}
+		},
+		media: {
+			searchFields: {Id: 'integer'}
+		}
+	};
+
+	JSONStore.init(collections)
+	.then(() => {
+		return JSONStore.get('lesson').count();
+	})
+	.then(function(result){
+		//check if data has been added
+		if (result == 0) {
+			$.getJSON(
+				"js/lessons.json",
+				function (data) {
+					// Get an accessor to the lesson collection and add data.
+					JSONStore.get('lesson').add(data);
+				}
+			);
+		} 
+	})
+	.then(() => {
+		//load the current lesson into lessonData variable
+		var options = {
+			exact: true,
+			limit:1
+		};
+
+		return JSONStore.get('lesson').find({Id: lessonId}, options);
+	
+	})
+	.then(function(result){
+		lessonData = result[0].json;
+	})
+	.then(() => {
+		//load the first slide
+		getSlide();
+	})
+	.fail(function (errorObject) {
+		// Handle failure for any of the previous operations 
+		console.log(errorObject);
+	});
+ }
+*/
+
+document.addEventListener('deviceready', function () {
+	
+	currentOrder = 1;
+	wrongCount = 0;
+	correctCount = 0;
+
+	var slideScore = new Array();
+	localStorage.setItem("slideScore", JSON.stringify(slideScore));
+	localStorage.setItem("i", "1");
+	
+	init_loki();
+
+}, false);
+
+
+</script>
+</head>
+
+<body>
+<div id="stars" class="table"></div>
+
+<div id="div1"></div>
+
+<div id="loader"  class="loading">
+</div>
+
+<div id="offline" style="display: none"></div>
+</div>
+
+<script id="t-offline" type="text/html">
+	<div class="offline">{{noConnection}}</div>
+	<button class="navigation" onclick="window.location.reload()">{{refresh}}</button>
+</script>
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+
+</body>
+</html>

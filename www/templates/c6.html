@@ -1,0 +1,20 @@
+<!-- matching pairs text -->
+<table>
+<% $.each(Medias, function(i, media) { %>
+    <tr>
+        <td class="frame"><button class="choice-english" onclick="selectEnglishText('<%= media.Id %>', this, '<%= escape_quotes(media.English) %>')" ><%= media.English %></button></td>
+    </tr>
+<% }); %>
+</table>
+
+<p>&nbsp;</p>
+
+<% shuffle(Medias); %>
+
+<table>
+<% $.each(Medias, function(i, media) { %>
+   <tr>
+       <td class="frame"><button class="choice-thai" onclick="selectThaiText('<%= media.Id %>', this)" ><%= media.Thai %></button></td>
+    </tr>
+<% }); %>
+</table>

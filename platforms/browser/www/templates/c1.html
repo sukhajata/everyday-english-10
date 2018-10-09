@@ -1,0 +1,32 @@
+<!-- multiple choice image -->
+<table>
+<% if (HasAudio) { %>
+    <tr>
+        <td style="text-align:left"><audio autoplay controls src="<%= audioUrl  + AudioFileName %>"></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-english"><%= LabelEnglish %></div></td>
+    </tr>    
+<% } else { %>
+    <tr>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(TextToSpeak) %>')"/></td>
+        <td style="text-align:left"><div class="label-english"><%= LabelEnglish %></div></td>
+    </tr>
+<%  } %>
+</table>
+
+<% shuffle(Medias); %>
+
+<table class="images" align="center">
+<% $.each(Medias, function(i, media) { 
+    if (media.IsTarget == "1") { %>
+        <tr>
+            <td class="frame" ><img class="content" onclick="highlightRight(this)"  src="<%= imageUrl + media.ImageFileName %>"/></td>
+        </tr>
+    <% } else { %>
+        <tr>
+            <td class="frame"><img class="content" onclick="highlightWrong(this)"  src="<%= imageUrl + media.ImageFileName %>"/></td>
+        </tr>
+    <% }
+}); %>
+</table>

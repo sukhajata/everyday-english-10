@@ -1,0 +1,262 @@
+<html>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<meta name="robots" content="index, follow">
+	<head>
+		<script src="js/jquery.js"></script>
+		<script src="js/functions.js"></script>
+		<script src="js/mustache.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/sidenav.css">
+		<script>
+
+			function joinGroup() {
+				if ($('#code').val().length == 0) {
+					$('#code').addClass('error');
+				} else {
+					$('#code').removeClass('error');
+					
+					var code = $('#code').val();
+					$.ajax({
+						url: "https://sukhajata.com/m/joinGroup.php",
+						data: {
+							userId: localStorage.getItem('userId'),
+							code: code
+						}, 
+						error: function() {
+							handleTimeout();
+						},
+						success: function(result){
+							if (result < 0) {
+								$('#error-message').show();
+							} else {
+								$('#error-message').hide();
+								$('#joinGroup').hide();
+								$('div#div1').show();
+								$('#div1').html(result);
+							}
+						},
+						timeout: 3000	
+					});
+				}
+				
+				return false;
+			}
+			
+			function showNewGroup() {
+				$('div#newGroup').show();
+				$('div#joinGroup').hide();
+				$('div#div1').hide();
+				
+				return false;
+			}
+			
+			function showJoinGroup() {
+				$('div#newGroup').hide();
+				$('div#joinGroup').show();
+				$('div#div1').hide();
+				
+				return false;
+			}
+			
+			function createGroup() {
+				if ($('#groupName').val().length > 2) {
+					$('#newGroup').hide();
+					$('div#div1').show();
+					
+					var name = $('#groupName').val();
+					$.ajax({
+						url: "https://sukhajata.com/m/createGroup.php",
+						data: {
+							userId : localStorage.getItem('userId'),
+							groupName : name
+						},
+						error: function() {
+							handleTimeout();
+						},
+						success: function(response) {
+							$('#div1').html(response);
+						},
+						timeout: 3000
+					});
+
+					
+				} else {
+					$('#groupName').addClass('error');
+				}
+			}
+			
+			function openNav() {
+				document.getElementById("sidenav").style.width = "250px";
+			}
+
+			function closeNav() {
+				document.getElementById("sidenav").style.width = "0";
+			}
+
+			function handleTimeout() {
+				$.getJSON("js/thai.json", function(data) {
+					var templateOffline = $('#t-offline').html();
+					var output = Mustache.render(templateOffline, data);
+					$('div#offline').html(output);
+
+					$('div#content').hide();
+					$('div#offline').show();
+				});
+				
+			}
+			
+			document.addEventListener('deviceready', function () {
+				$('#sidenav').load("sidenav.html");
+
+				$.ajax({
+					url: "https://sukhajata.com/m/group2.php", 
+					data: {
+						userId: localStorage.getItem('userId')
+					},
+					error: function() {
+						handleTimeout();
+					},
+					success: function(response) {
+						$('#div1').html(response);
+						if (response == '') {
+							$('#joinGroup').show();
+						}
+					},
+					timeout: 5000
+				});
+				
+			}, false);
+			
+			
+		</script>
+		<style type="text/css">
+		#pupils {
+			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		#pupils td, #pupils th {
+			border: 1px solid #ddd;
+			padding: 8px;
+			font-size:1em;
+		}
+
+		#pupils tr:nth-child(even){background-color: #f2f2f2;}
+
+		#pupils tr:hover {background-color: #ddd;}
+
+		#pupils th {
+			padding-top: 12px;
+			padding-bottom: 12px;
+			text-align: left;
+			background-color: #4CAF50;
+			color: white;
+		}
+		
+		input[type=text],input[type=number]{
+			font-size: 1em;
+			padding:5px;
+			width:100%;
+			margin-bottom:10px;
+		}
+			
+		input[type=button] {
+			width:100%;
+			padding:7px;
+			background-color: #4CAF50; /* Green */
+			border: none;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 1em;
+		}
+		
+		input.error {
+			border: solid 2px #FF0000; 
+		}
+		
+		div.content {
+			margin: 50px 10px 0 10px;
+		}
+		
+		p.error {
+			color:red;
+			font-size:1em;
+			padding-top:5px;
+		}
+		
+		a {
+			font-size:1em;
+		}
+		
+		a.right {
+			padding:8px 10px 10px 10px;
+			display:block;
+			float:right;
+		}
+
+		div.offline {
+    		margin-top: 50px;
+    		text-align: center;
+			font-size: 1.5em;
+			padding: 50px;
+		}
+
+		button.navigation {
+			width:100%;
+			padding:7px;
+			background-color: #4CAF50; /* Green */
+			border: none;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="navbar">
+			<span class="menu" onclick="openNav()">&#9776;</span>
+		</div>
+		<div id="sidenav" class="sidenav">
+		</div>
+	
+		<div class="content">
+			<div class="group" id="joinGroup" style="display:none">
+				<a href="" class="right" onclick="return showNewGroup()">สร้างกลุ่มใหม่</a>
+				<p class="error" id="error-message" style="display:none">หารหัสไม่เจอ</p>
+				<div style="padding:8px 10px 10px 0">ใส่รหัสกลุ่ม</div>
+				<form action="" method="get">
+					<input type="text" name="code" id="code"/>
+					<input type="button" value="ร่วม" onclick="return joinGroup()"/>
+				</form>
+			</div>
+			<div id="newGroup" class="group" style="display:none">
+				<a href="" class="right" onclick="return showJoinGroup()">เข้าร่วมกลุ่มที่มีอยู่</a>
+				<div style="padding:8px 10px 10px 0">ชื่อกลุ่มใหม่</div>
+				<input id="groupName" name="groupName" type="text"/>
+				<input id="submitNewGroup" type="button" value="สร้าง" onclick="createGroup()"/>
+			</div>
+
+			<div id="div1" class="main">
+			</div>
+
+		</div>
+		
+		<div id="offline" style="display: none;padding: 10px"></div>
+		</div>
+	
+		<script id="t-offline" type="text/html">
+			<div class="offline">{{noConnection}}</div>
+			<button class="navigation" onclick="window.location.reload()">{{refresh}}</button>
+		</script>
+
+		<script type="text/javascript" src="cordova.js"></script>
+		<script type="text/javascript" src="js/index.js"></script>
+	</body>
+</html>

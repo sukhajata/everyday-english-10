@@ -1,0 +1,12 @@
+<!-- writing -->
+<% $.each(Medias, function(i, media) { %>
+<p class="label-english"><%= media.English %></p>
+<input type="text" onkeyup="checkText(this, '<%= escape_quotes(media.English) %>')" />
+<button class="navigation-disabled" id="next" onclick="moveNext()" disabled>ต่อไป</button>
+<button class="navigation-cheat" onclick="moveNextCheat()">ไม่ได้</button>
+    
+    <% if (media.ImageFileName != '') { %>
+<img class="single" src="<%= imageUrl + media.ImageFileName %>"/>
+    <% } %>
+    
+<% }); %>

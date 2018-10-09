@@ -1,0 +1,45 @@
+<!-- missing word -->
+<table>
+<% if (HasAudio) { %>
+    <tr>
+        <td style="text-align:left"><audio autoplay controls src="<%= audioUrl  + AudioFileName %>"></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-english"><%= LabelEnglish %></div></td>
+    </tr>
+    <tr>
+        <td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>
+<% } else { %>
+    <tr>
+        <td class="speaker"><img width="25px" src="img/speaker.png" onclick="speak('<%= escape_quotes(TextToSpeak) %>')"/></td>
+        <td style="text-align:left"><div class="label-english"><%= LabelEnglish %></div></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td style="text-align:left"><div class="label-thai" ><%= Content_Thai %></div></td>
+    </tr>    
+<% } %>
+</table>
+
+<% shuffle(Medias); %>
+
+<table>
+<% $.each(Medias, function(i, media) { 
+    var txt = media.English;
+    if (Content_English.indexOf('_') == 0 || txt.indexOf("I ") == 0 || txt.indexOf("I'") == 0) {
+        txt = txt.charAt(0).toUpperCase() + txt.substr(1);
+    } else {
+        txt = txt.charAt(0).toLowerCase() + txt.substr(1);
+    }
+    
+    if (media.IsTarget == "1") { %>
+        <tr>
+            <td class="frame"><button class="choice-thai" onclick="highlightRight(this)" ><%= txt %></button></td>
+        </tr>
+    <% } else { %>
+        <tr>
+            <td class="frame"><button class="choice-thai" onclick="highlightWrong(this)"><%= txt %></button></td>
+        </tr>
+    <% }
+});	%>
+</table>
